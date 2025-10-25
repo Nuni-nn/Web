@@ -1,30 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page 7</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Page 7 — Under the Moonlight</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div class="controls">
-        <button class="control-btn">🔊</button>
-        <button class="control-btn">🔇</button>
+
+  <!-- === Controls === -->
+  <div class="controls">
+    <button class="control-btn" title="Sound On">🔊</button>
+    <button class="control-btn" title="Mute">🔇</button>
+  </div>
+
+  <!-- === Navigation === -->
+  <nav class="nav">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="contacts.html">Contacts</a>
+    <a href="gallery.html">Gallery</a>
+  </nav>
+
+  <!-- === Scene Layout (3 : 6 : 3 Grid) === -->
+  <section class="characters">
+
+    <!-- Left Character -->
+    <img src="prince.jpg" alt="The Prince" class="character-img left-char" />
+
+    <!-- Story Box (center) -->
+    <div class="story-box">
+      <h1>Under the Moonlight</h1>
+
+      <p>The ball has nearly ended. The music drifts softly, chandeliers dim as guests depart.  
+      Yet here, on the moonlit balcony, the world belongs only to you and him.</p>
+
+      <p>He takes your hand gently, his thumb brushing your skin.  
+      His mask conceals part of his face — but not the warmth in his eyes.</p>
+
+      <p><em>“[Name],”</em> he whispers, <em>“I do not know what tomorrow will bring.  
+      My life is bound by duty and expectation. Yet tonight, for the first time, I feel free.  
+      I want this night to be more than memory — I want it to be a beginning.”</em></p>
+
+      <p>His voice trembles with sincerity. The air holds still — as if even the moon waits for your answer.</p>
+
+      <p><em>“But the choice… is yours.”</em></p>
+
+      <!-- Player Choices -->
+      <div class="choices">
+        <a href="8pagehappyend.html">
+          <button class="btn-choice">Accept his feelings — take his hand</button>
+        </a>
+        <a href="8pagebadend.html">
+          <button class="btn-choice">Refuse — step away into the night</button>
+        </a>
+      </div>
     </div>
 
-   <div class="characters">
-  <img src="prince.jpg" alt="Prince" class="character-img left-char">
-  <img src="girl.jpg" alt="Heroine" class="character-img right-char">
-</div>
+    <!-- Right Character -->
+    <img src="girl.jpg" alt="The Heroine" class="character-img right-char" />
 
+  </section>
 
-    <div class="container_page">
-        <p>The ball has nearly ended. The music is softer now, the chandeliers dimming as guests depart. Yet here on the balcony, beneath a silver moon, the world belongs only to you and him.</p> <p>He takes your hand gently, his thumb brushing your skin. His mask hides part of his face, but not the emotion in his eyes.</p> <p>— “[Name], I do not know what tomorrow will bring. I live in a world of duty and expectation. Yet tonight, for the first time, I feel free. I want this night to be more than memory. I want it to be a beginning.”</p> <p>His voice trembles with honesty. — “But the choice… is yours.”</p>
-
-        <div class="choices">
-            <a href="8pagehappyend.html"><button class="btn-choice">Accept his feelings</button></a>
-            <a href="8pagebadend.html"><button class="btn-choice">Refuse, step away</button></a>
-        </div>
-    </div>
 </body>
 </html>

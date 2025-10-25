@@ -1,3 +1,4 @@
+/* ===== Clock ===== */
 function startClock() {
   const el = document.getElementById("clock");
   if (!el) return;
@@ -12,6 +13,7 @@ function startClock() {
   setInterval(tick, 1000);
 }
 
+/* ===== Background Color Changer ===== */
 (function setupColorChanger() {
   const btn = document.getElementById("changeBgBtn");
   if (!btn) return;
@@ -22,6 +24,7 @@ function startClock() {
   });
 })();
 
+/* ===== Popup ===== */
 (function setupPopup() {
   const open = document.getElementById("openPopup");
   const overlay = document.getElementById("popupOverlay");
@@ -35,6 +38,7 @@ function startClock() {
   });
 })();
 
+/* ===== Accordion ===== */
 (function setupAccordion() {
   const acc = document.querySelectorAll(".accordion-item .accordion-header");
   if (!acc.length) return;
@@ -43,15 +47,14 @@ function startClock() {
       const item = btn.closest(".accordion-item");
       item.classList.toggle("open");
       const panel = item.querySelector(".accordion-panel");
-      if (item.classList.contains("open")) {
-        panel.style.maxHeight = panel.scrollHeight + "px";
-      } else {
-        panel.style.maxHeight = null;
-      }
+      panel.style.maxHeight = item.classList.contains("open")
+        ? panel.scrollHeight + "px"
+        : null;
     });
   });
 })();
 
+/* ===== Contact Form Validation ===== */
 (function setupContactFormValidation() {
   const form = document.getElementById("contactForm");
   if (!form) return;
@@ -62,16 +65,14 @@ function startClock() {
 
   const setError = (input, message) => {
     const wrap = input.closest(".field");
-    const hint = wrap.querySelector(".error-hint");
     wrap.classList.add("has-error");
-    if (hint) hint.textContent = message;
+    wrap.querySelector(".error-hint").textContent = message;
   };
 
   const clearError = (input) => {
     const wrap = input.closest(".field");
-    const hint = wrap.querySelector(".error-hint");
     wrap.classList.remove("has-error");
-    if (hint) hint.textContent = "";
+    wrap.querySelector(".error-hint").textContent = "";
   };
 
   const isEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
@@ -108,7 +109,454 @@ function startClock() {
   });
 })();
 
+/* ===== Navbar Keyboard Navigation ===== */
+(function enhanceNavbarKeyboardNav() {
+  document.addEventListener("DOMContentLoaded", () => {
+    const navContainer = document.querySelector("#mainNavbar");
+    if (!navContainer) return;
+    const links = navContainer.querySelectorAll("a.nav-link, a.navbar-brand");
+    links.forEach((a, idx) => {
+      a.setAttribute("tabindex", "0");
+      a.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+          e.preventDefault();
+          const dir = e.key === "ArrowRight" ? 1 : -1;
+          const next = (idx + dir + links.length) % links.length;
+          links[next].focus();
+        }
+      });
+    });
+  });
+})();
+
+/* ===== Reveal on Scroll ===== */
+(function revealOnScroll() {
+  const addRevealTargets = () => {
+    const items = document.querySelectorAll(".card, section, .list-group, .accordion, .container, .row");
+    items.forEach(el => el.classList.add("reveal"));
+  };
+  const setupObserver = () => {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add("visible");
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+  };
+  document.addEventListener("DOMContentLoaded", () => {
+    addRevealTargets();
+    setupObserver();
+  });
+})();
+
+/* ===== Hidden Control Panel ===== */
 document.addEventListener("DOMContentLoaded", () => {
-  startClock(); 
+  const settingsBtn = document.createElement("button");
+  settingsBtn.id = "settingsToggle";
+  settingsBtn.className = "settings-btn";
+  settingsBtn.innerHTML = "⚙️";
+  document.body.appendChild(settingsBtn);
+
+  const panel = document.createElement("div");
+  panel.id = "a6-panel";
+  panel.className = "a6-panel shadow hidden";
+  panel.innerHTML = `
+    <div class="a6-row">
+      <label for="a6-theme" class="a6-label">Theme</label>
+      <select id="a6-theme" class="a6-input">
+        <option value="system">System</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </div>
+    <div class="a6-row">
+      <button id="a6-accent" class="a6-btn">Random Accent</button>
+      <button id="a6-reset" class="a6-btn">Reset</button>
+    </div>
+    <div class="a6-row">
+      <label class="a6-label" for="a6-name">Greeting</label>
+      <input id="a6-name" class="a6-input" type="text" placeholder="Enter your name" />
+      <button id="a6-save-name" class="a6-btn">Save</button>
+      <p id="a6-greeting" class="mt-2"></p>
+    </div>
+    <div class="a6-row small">Press <kbd>T</kbd> to toggle theme</div>
+    <div class="a6-row">
+      <label class="a6-label">Sound</label>
+      <button id="a6-snd-bg" class="a6-btn" aria-pressed="false">BG</button>
+      <button id="a6-snd-ui" class="a6-btn" aria-pressed="true">UI</button>
+    </div>
+  `;
+  document.body.appendChild(panel);
+
+  /* Toggle panel on click */
+  settingsBtn.addEventListener("click", () => {
+    panel.classList.toggle("hidden");
+  });
+
+  /* Theme */
+  // ---- THEME ----
+const themeSelect = panel.querySelector("#a6-theme");
+
+// слушатель для системной темы (храним, чтобы убирать при ручных режимах)
+let systemMQ, systemListener;
+
+function setDomTheme(mode) {
+  const html = document.documentElement;
+  // синхронизируем и наш data-theme, и bootstrap'овский data-bs-theme
+  if (mode === "light" || mode === "dark") {
+    html.dataset.theme = mode;
+    html.setAttribute("data-bs-theme", mode);
+  } else {
+    delete html.dataset.theme;
+    html.removeAttribute("data-bs-theme");
+  }
+}
+
+function applySystemThemeOnce() {
+  const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  setDomTheme(isDark ? "dark" : "light");
+}
+
+function enableSystemFollow() {
+  // сначала применим сразу
+  applySystemThemeOnce();
+  // затем подпишемся на изменения ОС
+  systemMQ = window.matchMedia("(prefers-color-scheme: dark)");
+  systemListener = (e) => setDomTheme(e.matches ? "dark" : "light");
+  // современные браузеры
+  if (typeof systemMQ.addEventListener === "function") {
+    systemMQ.addEventListener("change", systemListener);
+  } else {
+    // старые Safari
+    systemMQ.addListener(systemListener);
+  }
+}
+
+function disableSystemFollow() {
+  if (!systemMQ || !systemListener) return;
+  if (typeof systemMQ.removeEventListener === "function") {
+    systemMQ.removeEventListener("change", systemListener);
+  } else {
+    systemMQ.removeListener(systemListener);
+  }
+  systemMQ = null;
+  systemListener = null;
+}
+
+function applyTheme(mode) {
+  if (mode === "system") {
+    enableSystemFollow();
+  } else {
+    disableSystemFollow();
+    setDomTheme(mode); // "light" или "dark"
+  }
+}
+
+// начальная инициализация по выпадающему списку
+applyTheme(themeSelect.value || "system");
+themeSelect.addEventListener("change", (e) => applyTheme(e.target.value));
+
+
+  /* Accent */
+  const accentBtn = panel.querySelector("#a6-accent");
+  const resetBtn = panel.querySelector("#a6-reset");
+  const setAccent = (hex) => document.documentElement.style.setProperty("--accent", hex);
+  const randomHex = () => "#" + Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, "0");
+  accentBtn.addEventListener("click", () => setAccent(randomHex()));
+  resetBtn.addEventListener("click", () => {
+    document.documentElement.style.removeProperty("--accent");
+    themeSelect.value = "system";
+    applyTheme("system");
+  });
+
+  /* Greeting */
+  const nameInput = panel.querySelector("#a6-name");
+  const saveBtn = panel.querySelector("#a6-save-name");
+  const greeting = panel.querySelector("#a6-greeting");
+  const savedName = localStorage.getItem("userName");
+  if (savedName) {
+    greeting.textContent = `Welcome back, ${savedName}!`;
+    nameInput.value = savedName;
+  }
+  saveBtn.addEventListener("click", () => {
+    const name = nameInput.value.trim();
+    if (!name) {
+      greeting.textContent = "Please enter your name.";
+      return;
+    }
+    localStorage.setItem("userName", name);
+    greeting.textContent = `Welcome, ${name}!`;
+  });
+
+  /* Sound */
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  let ctx, bgNode, bgGain;
+  const ensureCtx = () => (ctx ||= new AudioCtx());
+  const playClick = () => {
+    const uiBtn = document.getElementById("a6-snd-ui");
+    if (!uiBtn || uiBtn.getAttribute("aria-pressed") !== "true") return;
+    const ac = ensureCtx();
+    const osc = ac.createOscillator();
+    const gain = ac.createGain();
+    osc.type = "square";
+    osc.frequency.value = 660;
+    gain.gain.value = 0.05;
+    osc.connect(gain).connect(ac.destination);
+    osc.start();
+    osc.stop(ac.currentTime + 0.06);
+  };
+  const toggleBG = () => {
+    const bgBtn = document.getElementById("a6-snd-bg");
+    const on = bgBtn.getAttribute("aria-pressed") === "true";
+    if (on) {
+      bgBtn.setAttribute("aria-pressed", "false");
+      if (bgNode) { try { bgNode.stop(); } catch {} bgNode.disconnect(); bgNode = null; }
+      if (bgGain) { bgGain.disconnect(); bgGain = null; }
+      return;
+    }
+    const ac = ensureCtx();
+    const osc = ac.createOscillator();
+    const filt = ac.createBiquadFilter();
+    bgGain = ac.createGain();
+    osc.type = "sine";
+    osc.frequency.value = 220;
+    filt.type = "lowpass";
+    filt.frequency.value = 800;
+    bgGain.gain.value = 0.02;
+    osc.connect(filt).connect(bgGain).connect(ac.destination);
+    osc.start();
+    bgNode = osc;
+    bgBtn.setAttribute("aria-pressed", "true");
+  };
+  const bgBtn = panel.querySelector("#a6-snd-bg");
+  const uiBtn = panel.querySelector("#a6-snd-ui");
+  bgBtn.addEventListener("click", () => { toggleBG(); playClick(); });
+  uiBtn.addEventListener("click", () => {
+    const state = uiBtn.getAttribute("aria-pressed") === "true";
+    uiBtn.setAttribute("aria-pressed", String(!state));
+    playClick();
+  });
 });
 
+/* ===== Start Clock ===== */
+document.addEventListener("DOMContentLoaded", startClock);
+
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("changeBgBtn");
+  if (!btn) return;
+
+  // Массив возможных фонов
+  const backgrounds = [
+    "url('castle.jpg') center/cover no-repeat fixed",
+    "url('flowers.jpg') center/cover no-repeat fixed",
+    "url('balkon.jpg') center/cover no-repeat fixed",
+    "url('dancehall.jpg') center/cover no-repeat fixed"
+  ];
+
+  // При нажатии меняем фон
+  btn.addEventListener("click", () => {
+    const randomBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+    document.body.style.background = randomBg;
+    document.body.style.transition = "background 1s ease";
+  });
+});
+
+// ===== Live Search (filter + highlight) =====
+(function setupLiveSearch() {
+  const input = document.getElementById('searchInput');
+  const list  = document.getElementById('searchList');
+  const stat  = document.getElementById('searchStatus');
+  if (!input || !list) return;
+
+  const items = [...list.querySelectorAll('li')];
+
+  // утилита подсветки совпадений
+  const highlight = (el, q) => {
+    const text = el.getAttribute('data-raw') ?? el.textContent;
+    el.setAttribute('data-raw', text); // сохраним оригинал один раз
+    if (!q) { el.innerHTML = text; return; }
+    const re = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'ig');
+    el.innerHTML = text.replace(re, '<mark class="search-hit">$1</mark>');
+  };
+
+  const doFilter = () => {
+    const q = input.value.trim();
+    let shown = 0;
+    items.forEach(li => {
+      const txt = (li.getAttribute('data-raw') ?? li.textContent).toLowerCase();
+      const match = !q || txt.includes(q.toLowerCase());
+      li.style.display = match ? '' : 'none';
+      if (match) { shown++; }
+      highlight(li, q);
+    });
+    if (stat) {
+      stat.textContent = q
+        ? (shown ? `Found: ${shown}` : 'No results')
+        : '';
+    }
+  };
+
+  input.addEventListener('input', doFilter);
+  doFilter(); // первоначальная инициализация
+})();
+
+// ===== Random Counter Update =====
+document.addEventListener("DOMContentLoaded", () => {
+  const counters = document.querySelectorAll(".count");
+
+  // Функция плавной анимации счётчика
+  function animateValue(el, start, end, duration = 1000) {
+    const range = end - start;
+    let startTime = null;
+    function step(timestamp) {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      el.textContent = Math.floor(start + range * progress);
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  // Функция для обновления значений каждые X секунд
+  function updateRandomly() {
+    counters.forEach((el) => {
+      const current = parseInt(el.textContent, 10) || 0;
+
+      // определяем диапазоны (можно менять под себя)
+      const min = current - Math.floor(Math.random() * 10);
+      const max = current + Math.floor(Math.random() * 20);
+
+
+      const next = Math.floor(Math.random() * (max - min + 1)) + min;
+      animateValue(el, current, next, 1200);
+    });
+  }
+
+  // Запускаем обновление каждые 5 секунд
+  setInterval(updateRandomly, 5000);
+});
+
+/* ===== Story Search across multiple pages ===== */
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("novelSearch");
+  const btn   = document.getElementById("novelSearchBtn");
+  const box   = document.getElementById("novelResults");
+  if (!input || !box) return;
+
+  // Список страниц новеллы (добавь/убери свои файлы)
+  const NOVEL_PAGES = [
+    "1page.html","2page.html","3page.html","4page.html","5page.html","6page.html","7page.html",
+    "8pagehappyend.html","8pagebadend.html"
+  ];
+
+  // Кэш индекса
+  let INDEX = [];
+
+  // Загружаем все страницы и строим индекс
+  (async function buildIndex(){
+    const parser = new DOMParser();
+    const jobs = NOVEL_PAGES.map(async (url) => {
+      try {
+        const res  = await fetch(url, { cache: "no-store" });
+        if (!res.ok) throw new Error(res.status);
+        const html = await res.text();
+        const doc  = parser.parseFromString(html, "text/html");
+
+        // Пытаемся взять текст из story-контейнера, иначе весь текст страницы
+        const story = (doc.querySelector(".container_page")?.innerText
+                    || doc.querySelector(".container")?.innerText
+                    || doc.body.innerText || "")
+                    .replace(/\s+/g, " ").trim();
+
+        const title = doc.querySelector("title")?.textContent || url;
+
+        INDEX.push({ url, title, body: story.toLowerCase(), raw: story });
+      } catch (e) {
+        // можно подсветить ошибку в консоли, но не ломать работу поиска
+        console.warn("Index skip:", url, e);
+      }
+    });
+    await Promise.all(jobs);
+  })();
+
+  // Поиск
+  function searchDocs(q){
+    q = q.trim().toLowerCase();
+    if (!q) return [];
+    const words = q.split(/\s+/);
+
+    const scored = INDEX.map(d => {
+      // просто считаем сколько слов встречается в документе
+      let score = 0;
+      for (const w of words) if (d.body.includes(w)) score++;
+      // позиция первого полного запроса
+      const idx = d.body.indexOf(q);
+      return { ...d, score, idx };
+    }).filter(x => x.score > 0);
+
+    // сортировка по релевантности и близости вхождения
+    scored.sort((a,b) => (b.score - a.score) || (a.idx - b.idx));
+    return scored.slice(0, 10);
+  }
+
+  // Формируем сниппет
+  function makeSnippet(text, q, idx){
+    if (idx < 0) idx = text.toLowerCase().indexOf(q.toLowerCase());
+    const start = Math.max(0, idx - 70);
+    const end   = Math.min(text.length, idx + q.length + 70);
+    let snip = (start>0?'…':'') + text.slice(start, end) + (end<text.length?'…':'');
+    // подсветка
+    const re = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, "ig");
+    snip = snip.replace(re, "<mark>$1</mark>");
+    return snip;
+  }
+
+  // Рендер результатов
+  function render(q){
+    const items = searchDocs(q);
+    if (!items.length){
+      box.innerHTML = q ? `<div class="story-result">Nothing found for “<b>${q}</b>”.</div>` : "";
+      return;
+    }
+    box.innerHTML = items.map(it => `
+      <div class="story-result" role="option">
+        <a href="${it.url}">${it.title}</a>
+        <div class="story-snippet">${makeSnippet(it.raw, q, it.idx)}</div>
+      </div>
+    `).join("");
+  }
+
+  // Удобства: debounce ввода и кнопка
+  const debounce = (fn, ms=250) => { let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms); }; };
+  input.addEventListener("input", debounce(()=>render(input.value), 250));
+  btn?.addEventListener("click", ()=>render(input.value));
+
+  // По Enter — сразу показать результаты
+  input.addEventListener("keydown", (e)=>{
+    if (e.key === "Enter") { e.preventDefault(); render(input.value); }
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const bgMusic = document.getElementById("bgMusic");
+  const soundOnBtn = document.querySelector(".control-btn[title='Sound On']");
+  const muteBtn = document.querySelector(".control-btn[title='Mute']");
+
+  // Начальное состояние (выключено)
+  bgMusic.volume = 0.4; // громкость 0–1
+  bgMusic.pause();
+
+  // Включить звук
+  soundOnBtn.addEventListener("click", () => {
+    bgMusic.play();
+    soundOnBtn.style.opacity = "1";
+    muteBtn.style.opacity = "0.5";
+  });
+
+  // Выключить звук
+  muteBtn.addEventListener("click", () => {
+    bgMusic.pause();
+    soundOnBtn.style.opacity = "0.5";
+    muteBtn.style.opacity = "1";
+  });
+});
