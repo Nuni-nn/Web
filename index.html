@@ -3,21 +3,31 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Cinderella: A Modern Romance — Home</title>
+  <title>Cinderella: A Modern Romance | Interactive Story Game</title>
 
+  <!-- SEO -->
+  <meta name="description" content="An interactive fairytale where your choices decide the ending. Explore Cinderella: A Modern Romance and unlock multiple story paths.">
+  <meta name="theme-color" content="#ffffff">
+
+  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
+  <!-- Custom Styles -->
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="bg-light">
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="mainNavbar">
     <div class="container">
       <a class="navbar-brand fw-bold" href="index.html">WEB</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+        aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="mainNavbar">
+
+      <div class="collapse navbar-collapse" id="navbarContent">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
           <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
@@ -28,6 +38,7 @@
     </div>
   </nav>
 
+  <!-- Header -->
   <header class="py-5 bg-dark text-white">
     <div class="container text-center">
       <h1 class="display-5 fw-bold">Cinderella: A Modern Romance</h1>
@@ -36,6 +47,39 @@
     </div>
   </header>
 
+  <section class="stats-tools container my-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+      
+      <!-- Счётчики -->
+      <ul class="metrics list-unstyled d-flex flex-wrap gap-4 justify-content-center mb-4">
+        <li class="metric">
+          <span class="count">1200</span>
+          <small>Players</small>
+        </li>
+        <li class="metric">
+          <span class="count">350</span>
+          <small>Endings</small>
+        </li>
+      </ul>
+
+      <!-- Карточка “скопировать ссылку” -->
+      <div class="copy-card">
+        <label for="copyText" class="copy-label">Share link</label>
+        <div class="copy-inline">
+          <input id="copyText" type="url" value="https://yourwebsite.example" />
+          <button id="copyBtn" type="button" class="btn-copy">Copy</button>
+        </div>
+        <p class="copy-hint">Tip: you can edit the link before copying.</p>
+      </div>
+
+      <div id="toast"></div>
+
+    </div>
+  </div>
+</section>
+
+  <!-- Story Sections -->
   <section class="container my-5">
     <div class="row g-4">
       <div class="col-12 col-lg-6">
@@ -55,12 +99,13 @@
     </div>
   </section>
 
+  <!-- Features Section -->
   <section class="container my-5">
     <div class="row g-4">
       <div class="col-12 col-md-6 col-lg-4">
         <div class="p-4 border rounded-4 h-100">
           <h3 class="h5">Characters</h3>
-          <p>Meet the Prince and other key characters throughout the ball and the royal gardens.</p>
+          <p>Meet the Prince, Princess, and other key characters throughout the royal adventure.</p>
         </div>
       </div>
       <div class="col-12 col-md-6 col-lg-4">
@@ -72,16 +117,39 @@
       <div class="col-12 col-md-6 col-lg-4">
         <div class="p-4 border rounded-4 h-100">
           <h3 class="h5">Endings</h3>
-          <p>Unlock Happy or Bad endings based on your path. Replay to discover more.</p>
+          <p>Unlock Happy or Bad endings based on your decisions. Replay to discover more.</p>
         </div>
       </div>
     </div>
   </section>
 
-   <footer class="text-center py-3 mt-4 bg-dark text-light">
+  <!-- Change Background Button -->
+  <div class="controls">
+    <button class="control-btn" id="changeBgBtn" title="Change background">🎨</button>
+  </div>
+
+  <!-- Subscribe Popup -->
+  <div class="text-center mt-4">
+    <button class="btn btn-primary" id="openPopup">Subscribe</button>
+  </div>
+
+  <div id="popupOverlay" class="popup-overlay">
+    <div class="popup-card">
+      <button class="popup-close" id="closePopup" aria-label="Close">×</button>
+      <h3 class="mb-3">Subscribe</h3>
+      <input type="text" id="subscribeEmail" class="popup-input" placeholder="Your email">
+      <button class="btn btn-success w-100 mt-3">Submit</button>
+    </div>
+  </div>
+
+  <footer class="text-center py-3 mt-4 bg-dark text-light">
+    <div id="clock" class="small" style="opacity:.85"></div>
     Team: <b>WEB</b> · Members: <b>Nurai, Dilnaz, Tolganay, Georgiy</b> · Group: <b>SE-2418</b>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="script.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="jquery-extras.js"></script>
 </body>
 </html>

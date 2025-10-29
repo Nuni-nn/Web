@@ -1,9 +1,31 @@
-/* ===== Responsive Typography (Task 1) ===== */
-
 /* Desktop (default) */
 h1 { font-size: 48px; margin: 0.6em 0 0.3em; }
 h2 { font-size: 32px; margin: 0.6em 0 0.3em; }
 p  { font-size: 18px; line-height: 1.6; }
+
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f9fafc;
+  color: #222;
+  margin: 0;
+  padding: 0;
+}
+
+main.content {
+  max-width: 720px;
+  margin: 40px auto;
+  padding: 0 16px;
+  text-align: center;
+}
+
+footer {
+  text-align: center;
+  padding: 12px;
+  margin-top: 40px;
+  background: #111;
+  color: #fff;
+  font-size: 0.9rem;
+}
 
 /* Tablet */
 @media (max-width: 1024px) {
@@ -19,10 +41,22 @@ p  { font-size: 18px; line-height: 1.6; }
   p  { font-size: 16px; }
 }
 
-/* ===== Card Group (Task 2) ===== */
 
-.wrap { max-width: 1100px; margin: 32px auto; padding: 0 16px; }
-.row-mq { display: flex; flex-wrap: wrap; gap: 16px; }
+/* ===== Card Group ===== */
+
+.wrap {
+  max-width: 1100px;
+  margin: 32px auto;
+  padding: 0 16px;
+  text-align: center;
+}
+
+.row-mq {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
 
 .card-mq {
   background: #fff;
@@ -30,6 +64,12 @@ p  { font-size: 18px; line-height: 1.6; }
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 4px 10px rgba(0,0,0,.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card-mq:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
 }
 
 .card-mq img {
